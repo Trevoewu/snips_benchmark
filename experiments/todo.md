@@ -11,7 +11,7 @@ Fine-tune instruction-following LLMs such as Llama 3 8B for cross-domain zero-sh
 - LLM-ready instruction data: `data/snips_lodo_llama/`
 - Fold construction: hold out one SNIPS domain, train on the other six domains, test on the held-out domain
 - Prompt style: domain name plus allowed slot names only, no slot descriptions
-- Output format: `{"slots": [{"slot": "...", "text": "..."}]}`
+- Output format: `{"slot_name_1": "slot_value" | null, "slot_name_2": "slot_value" | null, ...}`
 - Deduplication: enabled during fold and prompt-data generation
 
 ## Main Hypothesis
@@ -99,9 +99,10 @@ An instruction-tuned LLM fine-tuned on the six source domains can transfer slot 
 7. If the pilot is stable, launch all seven folds
 8. Repeat best configuration for additional seeds
 
-## Immediate Llama SFT Configuration
+## Immediate SFT Pilot Configuration
 
-- Base model: `/data/public_model/Meta-Llama-3.1-8B-Instruct`
+- Current pilot model while Llama finishes downloading: `/data/public_model/qwen3-4b`
+- Planned main model after download: `/data/public_model/Meta-Llama-3.1-8B-Instruct`
 - Primary baseline model path for later comparison: `/data/public_model/roberta-base`
 - Training data: `data/snips_lodo_llama/<heldout_domain>/train.jsonl`
 - Dev data: `data/snips_lodo_llama/<heldout_domain>/dev.jsonl`
@@ -116,7 +117,7 @@ An instruction-tuned LLM fine-tuned on the six source domains can transfer slot 
   - `AddToPlaylist`
   - `BookRestaurant` or `RateBook`
 
-## Initial Llama Hyperparameters
+## Initial SFT Hyperparameters
 
 - Epoch cap: `5-8`
 - Learning rate: `2e-4`

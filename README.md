@@ -37,20 +37,21 @@ This runs, in order:
 - T5 baseline data: `data/snips_lodo_t5/summary.json`
 - Evaluator sanity check: `data/eval_reports/addtoplaylist_gold_eval.json`
 
-## Llama SFT
+## Current SFT Pilot
 
 - Default config: `experiments/llama_sft_config.json`
 - Training entrypoint: `scripts/train_llama_sft.py`
-- Base model path expected by current setup: `/data/public_model/Meta-Llama-3.1-8B-Instruct`
+- Current pilot model while Llama is still downloading: `/data/public_model/qwen3-4b`
+- Planned larger follow-up model: `/data/public_model/Meta-Llama-3.1-8B-Instruct`
 
 Example pilot run:
 
 ```bash
 python3 scripts/train_llama_sft.py \
   --fold AddToPlaylist \
-  --model-path /data/public_model/Meta-Llama-3.1-8B-Instruct \
+  --model-path /data/public_model/qwen3-4b \
   --data-root data/snips_lodo_llama \
-  --output-root outputs/llama_sft \
+  --output-root outputs/qwen3_4b_sft \
   --seed 42 \
   --epochs 6 \
   --patience-epochs 1 \

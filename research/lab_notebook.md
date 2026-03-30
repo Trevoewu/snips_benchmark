@@ -1,5 +1,36 @@
 # Lab Notebook
 
+## 2026-03-30
+
+### What changed
+- Ran two `qwen3-4b` QLoRA pilot folds with `scripts/train_llama_sft.py` using the temporary local base model at `/data/public_model/qwen3-4b`:
+  - `AddToPlaylist`
+  - `BookRestaurant`
+- Patched `scripts/evaluate_slot_json.py` so it can recover the first valid JSON object from model outputs that contain leading prose or `<think>` blocks before the final JSON answer.
+- Patched `scripts/train_llama_sft.py` so generation prompts pre-close Qwen3's think block via `enable_thinking=False`, keeping inference prompts aligned with the assistant-side chat template used during SFT.
+
+### Why
+- The raw pilot outputs often contained correct slot JSON after extra reasoning text, but the original evaluator required the whole prediction string to be valid JSON and therefore reported near-zero dev/test F1.
+- Qwen3's chat template inserts a closed think block before assistant answers during supervised formatting, so generation prompts should match that layout to reduce stray reasoning text and avoid training/inference mismatch.
+
+### Outcome
+- The original saved `test_reports/` from the pilot runs were misleadingly low because most predictions were counted as `invalid_json`.
+- Re-scoring the saved predictions with the patched evaluator produced the following recovered held-out `test_all` results:
+  - `AddToPlaylist`: micro-F1 `0.6743`, exact match `0.2329`
+  - `BookRestaurant`: micro-F1 `0.7146`, exact match `0.3066`
+- Subset breakdown from the reparsed reports:
+  - `AddToPlaylist` seen slots: micro-F1 `0.8931`
+  - `AddToPlaylist` unseen slots: micro-F1 `0.5926`
+  - `BookRestaurant` seen slots: micro-F1 `0.8950`
+  - `BookRestaurant` unseen slots: micro-F1 `0.7136`
+- Saved repaired evaluation outputs under:
+  - `outputs/qwen3_4b_sft/AddToPlaylist/seed_42/reparsed_test_reports/`
+  - `outputs/qwen3_4b_sft/BookRestaurant/seed_42/reparsed_test_reports/`
+
+### Follow-up
+- Re-run the Qwen3 pilot folds with the patched trainer so dev selection and held-out decoding both reflect the corrected prompt format.
+- If Qwen3 still emits occasional reasoning text, keep the tolerant evaluator path for robustness but treat the trainer-side prompt alignment as the primary fix.
+
 ## 2026-03-29
 
 ### What changed
@@ -30,3 +61,7 @@
 - Added `scripts/train_llama_sft.py` for fold-wise `Meta-Llama-3.1-8B-Instruct` SFT with LoRA or QLoRA, seed `42`, deterministic decoding, and epoch-level early stopping on dev micro-F1.
 - The training loop evaluates generated dev outputs after every epoch, keeps the best checkpoint by dev micro-F1, breaks ties with lower dev loss, and can optionally run held-out test evaluation after training.
 - Added a default config snapshot in `experiments/llama_sft_config.json` to document the current Llama pilot settings.
+
+### Pilot default update
+- Switched the current default SFT pilot from Llama to `/data/public_model/qwen3-4b` because the Llama 3.1 checkpoint is still downloading locally.
+- Kept the same data pipeline, JSON evaluation, and QLoRA-style settings so the cheaper Qwen run can serve as a smoke test before the larger Llama experiment.

@@ -1,32 +1,47 @@
 #!/usr/bin/env python3
 import argparse
+from copy import deepcopy
 import importlib.util
 import json
 import math
+import os
 import random
 import shutil
 from contextlib import nullcontext
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+# This trainer is PyTorch-only; disabling TF/Flax avoids optional import failures.
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
+os.environ.setdefault("USE_FLAX", "0")
+
 import torch
 from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
 from torch.optim import AdamW
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from transformers.optimization import get_cosine_schedule_with_warmup, get_linear_schedule_with_warmup
+from transformers.optimization import (
+    get_cosine_schedule_with_warmup,
+    get_linear_schedule_with_warmup,
+)
 
-from evaluate_slot_json import f1_score, get_candidate_slots, parse_target_text, safe_div
+from evaluate_slot_json import (
+    f1_score,
+    get_candidate_slots,
+    parse_target_text,
+    safe_div,
+)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Train Llama SFT with epoch-level dev micro-F1 early stopping."
+        description="Train chat causal LM SFT with epoch-level dev micro-F1 early stopping."
     )
     parser.add_argument(
         "--model-path",
         type=Path,
-        default=Path("/data/public_model/Meta-Llama-3.1-8B-Instruct"),
+        default=Path("/data/public_model/qwen3-4b"),
         help="Path to the base causal LM.",
     )
     parser.add_argument(
@@ -44,7 +59,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-root",
         type=Path,
-        default=Path("outputs/llama_sft"),
+        default=Path("outputs/qwen3_4b_sft"),
         help="Directory where checkpoints, metrics, and predictions are saved.",
     )
     parser.add_argument("--seed", type=int, default=42)
@@ -128,9 +143,20 @@ def read_jsonl(path: Path) -> List[Dict[str, object]]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
+def json_default(value: object) -> object:
+    if isinstance(value, Path):
+        return str(value)
+    raise TypeError(
+        f"Object of type {value.__class__.__name__} is not JSON serializable"
+    )
+
+
 def write_json(path: Path, payload: Dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False, default=json_default) + "\n",
+        encoding="utf-8",
+    )
 
 
 def write_jsonl(path: Path, records: Sequence[Dict[str, object]]) -> None:
@@ -146,27 +172,58 @@ def bitsandbytes_available() -> bool:
 
 def load_records(data_root: Path, fold: str) -> Dict[str, List[Dict[str, object]]]:
     fold_dir = data_root / fold
-    names = ["train", "dev", "test_all", "test_seen_slots", "test_unseen_slots", "test_no_slots"]
-    return {name: read_jsonl(fold_dir / f"{name}.jsonl") for name in names if (fold_dir / f"{name}.jsonl").exists()}
+    names = [
+        "train",
+        "dev",
+        "test_all",
+        "test_seen_slots",
+        "test_unseen_slots",
+        "test_no_slots",
+    ]
+    return {
+        name: read_jsonl(fold_dir / f"{name}.jsonl")
+        for name in names
+        if (fold_dir / f"{name}.jsonl").exists()
+    }
 
 
-def chat_text(tokenizer: AutoTokenizer, messages: Sequence[Dict[str, str]], add_generation_prompt: bool) -> str:
+def chat_text(
+    tokenizer: AutoTokenizer,
+    messages: Sequence[Dict[str, str]],
+    add_generation_prompt: bool,
+) -> str:
+    template_kwargs = {}
+    if add_generation_prompt:
+        # Qwen3 trains assistant turns with a closed think block before the final answer.
+        # Prefilling that block keeps generation aligned with the supervised target and
+        # reduces stray reasoning text before the JSON payload.
+        template_kwargs["enable_thinking"] = False
     return tokenizer.apply_chat_template(
         list(messages),
         tokenize=False,
         add_generation_prompt=add_generation_prompt,
+        **template_kwargs,
     )
 
 
 class SFTDataset(Dataset):
-    def __init__(self, records: Sequence[Dict[str, object]], tokenizer: AutoTokenizer, max_seq_length: int):
+    def __init__(
+        self,
+        records: Sequence[Dict[str, object]],
+        tokenizer: AutoTokenizer,
+        max_seq_length: int,
+    ):
         self.examples: List[Dict[str, object]] = []
         for record in records:
             messages = record["messages"]
             if not isinstance(messages, list) or len(messages) < 3:
-                raise ValueError(f"Training record {record.get('id')} must contain system, user, assistant messages.")
+                raise ValueError(
+                    f"Training record {record.get('id')} must contain system, user, assistant messages."
+                )
 
-            prompt_text = chat_text(tokenizer, messages[:-1], add_generation_prompt=True)
+            prompt_text = chat_text(
+                tokenizer, messages[:-1], add_generation_prompt=True
+            )
             full_text = chat_text(tokenizer, messages, add_generation_prompt=False)
             prompt_ids = tokenizer(prompt_text, add_special_tokens=False).input_ids
             full_ids = tokenizer(full_text, add_special_tokens=False).input_ids
@@ -195,8 +252,12 @@ class PromptDataset(Dataset):
         self.examples: List[Dict[str, object]] = []
         for record in records:
             messages = record["messages"]
-            prompt_messages = [message for message in messages if message.get("role") != "assistant"]
-            prompt_text = chat_text(tokenizer, prompt_messages, add_generation_prompt=True)
+            prompt_messages = [
+                message for message in messages if message.get("role") != "assistant"
+            ]
+            prompt_text = chat_text(
+                tokenizer, prompt_messages, add_generation_prompt=True
+            )
             self.examples.append(
                 {
                     "id": record["id"],
@@ -235,15 +296,22 @@ class TrainCollator:
         }
 
 
-def prompt_collator(tokenizer: AutoTokenizer, batch: Sequence[Dict[str, object]]) -> Dict[str, object]:
+def prompt_collator(
+    tokenizer: AutoTokenizer, batch: Sequence[Dict[str, object]]
+) -> Dict[str, object]:
     prompts = [example["prompt_text"] for example in batch]
-    encoded = tokenizer(
-        prompts,
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=tokenizer.model_max_length,
-    )
+    original_padding_side = tokenizer.padding_side
+    tokenizer.padding_side = "left"
+    try:
+        encoded = tokenizer(
+            prompts,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=tokenizer.model_max_length,
+        )
+    finally:
+        tokenizer.padding_side = original_padding_side
     return {
         "id": [example["id"] for example in batch],
         "target": [example["target"] for example in batch],
@@ -255,7 +323,9 @@ def prompt_collator(tokenizer: AutoTokenizer, batch: Sequence[Dict[str, object]]
     }
 
 
-def optimizer_groups(model: torch.nn.Module, weight_decay: float) -> List[Dict[str, object]]:
+def optimizer_groups(
+    model: torch.nn.Module, weight_decay: float
+) -> List[Dict[str, object]]:
     decay_params = []
     no_decay_params = []
     for name, parameter in model.named_parameters():
@@ -287,7 +357,7 @@ def device_and_dtype(use_bf16: bool) -> Tuple[torch.device, Optional[torch.dtype
 
 
 def load_model_and_tokenizer(args: argparse.Namespace):
-    tokenizer = AutoTokenizer.from_pretrained(args.model_path)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
@@ -303,7 +373,9 @@ def load_model_and_tokenizer(args: argparse.Namespace):
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.bfloat16 if dtype == torch.bfloat16 else torch.float16,
+            bnb_4bit_compute_dtype=torch.bfloat16
+            if dtype == torch.bfloat16
+            else torch.float16,
         )
         model_kwargs["device_map"] = "auto"
     else:
@@ -342,7 +414,11 @@ def train_epoch(
     optimizer.zero_grad(set_to_none=True)
     total_loss = 0.0
     steps = 0
-    autocast_ctx = torch.autocast("cuda", dtype=amp_dtype) if device.type == "cuda" and amp_dtype is not None else nullcontext()
+    autocast_ctx = (
+        torch.autocast("cuda", dtype=amp_dtype)
+        if device.type == "cuda" and amp_dtype is not None
+        else nullcontext()
+    )
 
     for step_idx, batch in enumerate(loader, start=1):
         batch = {key: value.to(device) for key, value in batch.items()}
@@ -376,7 +452,11 @@ def compute_loss(
     model.eval()
     total_loss = 0.0
     steps = 0
-    autocast_ctx = torch.autocast("cuda", dtype=amp_dtype) if device.type == "cuda" and amp_dtype is not None else nullcontext()
+    autocast_ctx = (
+        torch.autocast("cuda", dtype=amp_dtype)
+        if device.type == "cuda" and amp_dtype is not None
+        else nullcontext()
+    )
     for batch in loader:
         batch = {key: value.to(device) for key, value in batch.items()}
         with autocast_ctx:
@@ -386,7 +466,9 @@ def compute_loss(
     return total_loss / max(steps, 1)
 
 
-def compare_metrics(candidate: Dict[str, float], best: Optional[Dict[str, float]]) -> bool:
+def compare_metrics(
+    candidate: Dict[str, float], best: Optional[Dict[str, float]]
+) -> bool:
     if best is None:
         return True
     if candidate["micro_f1"] > best["micro_f1"]:
@@ -407,6 +489,16 @@ def generate_predictions(
     output_path: Optional[Path] = None,
 ) -> Dict[str, object]:
     dataset = PromptDataset(records, tokenizer)
+    generation_config = deepcopy(getattr(model, "generation_config", None))
+    eos_token_id = getattr(generation_config, "eos_token_id", tokenizer.eos_token_id)
+    pad_token_id = getattr(generation_config, "pad_token_id", tokenizer.pad_token_id)
+    if generation_config is not None:
+        generation_config.do_sample = False
+        generation_config.top_k = None
+        generation_config.top_p = None
+        generation_config.temperature = None
+        generation_config.pad_token_id = pad_token_id
+        generation_config.eos_token_id = eos_token_id
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
@@ -426,19 +518,23 @@ def generate_predictions(
         generated = model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
+            generation_config=generation_config,
             max_new_tokens=max_new_tokens,
             do_sample=False,
             temperature=None,
+            top_k=None,
             top_p=None,
             use_cache=True,
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=pad_token_id,
+            eos_token_id=eos_token_id,
         )
         prompt_lengths = attention_mask.sum(dim=1).tolist()
 
         for idx, example_id in enumerate(batch["id"]):
             generated_ids = generated[idx][int(prompt_lengths[idx]) :]
-            prediction_text = tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
+            prediction_text = tokenizer.decode(
+                generated_ids, skip_special_tokens=True
+            ).strip()
             gold_target = batch["target"][idx]
             metadata = batch["metadata"][idx]
             candidate_slots = get_candidate_slots({"metadata": metadata})
@@ -455,8 +551,12 @@ def generate_predictions(
             is_exact = int(gold_spans == pred_spans)
             exact_match += is_exact
 
-            subset = str(metadata.get("test_subset") or batch["split"][idx] or "unknown")
-            subset_counts = per_subset.setdefault(subset, {"tp": 0, "fp": 0, "fn": 0, "examples": 0, "exact_match": 0})
+            subset = str(
+                metadata.get("test_subset") or batch["split"][idx] or "unknown"
+            )
+            subset_counts = per_subset.setdefault(
+                subset, {"tp": 0, "fp": 0, "fn": 0, "examples": 0, "exact_match": 0}
+            )
             subset_counts["tp"] += tp
             subset_counts["fp"] += fp
             subset_counts["fn"] += fn
@@ -510,7 +610,12 @@ def maybe_copy_best(best_dir: Path, epoch_dir: Path) -> None:
     shutil.copytree(epoch_dir, best_dir)
 
 
-def save_adapter(model: torch.nn.Module, tokenizer: AutoTokenizer, path: Path, extra: Optional[Dict[str, object]] = None) -> None:
+def save_adapter(
+    model: torch.nn.Module,
+    tokenizer: AutoTokenizer,
+    path: Path,
+    extra: Optional[Dict[str, object]] = None,
+) -> None:
     path.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(path)
     tokenizer.save_pretrained(path)
@@ -518,8 +623,16 @@ def save_adapter(model: torch.nn.Module, tokenizer: AutoTokenizer, path: Path, e
         write_json(path / "metrics.json", extra)
 
 
-def reload_best_model(args: argparse.Namespace, best_dir: Path, device: torch.device, dtype: Optional[torch.dtype]):
-    model_kwargs = {"trust_remote_code": True, "torch_dtype": dtype if dtype is not None else torch.float32}
+def reload_best_model(
+    args: argparse.Namespace,
+    best_dir: Path,
+    device: torch.device,
+    dtype: Optional[torch.dtype],
+):
+    model_kwargs = {
+        "trust_remote_code": True,
+        "torch_dtype": dtype if dtype is not None else torch.float32,
+    }
     base_model = AutoModelForCausalLM.from_pretrained(args.model_path, **model_kwargs)
     if device.type == "cuda":
         base_model.to(device)
@@ -537,7 +650,10 @@ def main() -> None:
     write_json(output_dir / "train_args.json", vars(args))
 
     model, tokenizer, device, amp_dtype, used_4bit = load_model_and_tokenizer(args)
-    write_json(output_dir / "environment.json", {"used_4bit": used_4bit, "device": str(device), "amp_dtype": str(amp_dtype)})
+    write_json(
+        output_dir / "environment.json",
+        {"used_4bit": used_4bit, "device": str(device), "amp_dtype": str(amp_dtype)},
+    )
 
     train_dataset = SFTDataset(records["train"], tokenizer, args.max_seq_length)
     dev_dataset = SFTDataset(records["dev"], tokenizer, args.max_seq_length)
@@ -554,7 +670,9 @@ def main() -> None:
         collate_fn=TrainCollator(tokenizer),
     )
 
-    updates_per_epoch = math.ceil(len(train_loader) / max(args.gradient_accumulation_steps, 1))
+    updates_per_epoch = math.ceil(
+        len(train_loader) / max(args.gradient_accumulation_steps, 1)
+    )
     total_updates = max(updates_per_epoch * args.epochs, 1)
     warmup_steps = int(total_updates * args.warmup_ratio)
 
@@ -605,7 +723,10 @@ def main() -> None:
         if args.save_epoch_adapters:
             save_adapter(model, tokenizer, epoch_dir, extra=epoch_metrics)
 
-        candidate_metrics = {"micro_f1": epoch_metrics["dev_micro_f1"], "loss": dev_loss}
+        candidate_metrics = {
+            "micro_f1": epoch_metrics["dev_micro_f1"],
+            "loss": dev_loss,
+        }
         if compare_metrics(candidate_metrics, best_metrics):
             best_metrics = candidate_metrics
             epochs_without_improvement = 0

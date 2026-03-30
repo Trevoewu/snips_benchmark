@@ -11,9 +11,11 @@ from build_snips_lodo import collect_slot_types, load_examples
 SYSTEM_PROMPT = (
     "You extract slot values from user utterances. "
     "Use only the provided slot names. "
-    "Return strict JSON with the schema {\"slots\": [{\"slot\": string, \"text\": string}]}. "
+    "Return strict JSON as a single object from slot name to extracted text. "
     "Copy slot text spans exactly from the utterance. "
-    "If no slot value is present, return {\"slots\": []}."
+    "Omit missing slots. Return {} when no slots are present. "
+    'Example format: {"slot_name": "exact text"}. '
+    "Do not output markdown or extra text."
 )
 
 
@@ -96,18 +98,21 @@ def render_user_prompt(domain: str, slot_names: Sequence[str], utterance: str) -
     return (
         f"Domain: {domain}\n"
         f"Allowed slot names: {slot_list}\n"
-        f"Utterance: {utterance}\n"
-        "Extract all slot values from the utterance and return JSON only."
+        f"Utterance: {utterance}"
     )
 
 
-def render_target(spans: Iterable[Dict[str, object]]) -> str:
-    payload = {
-        "slots": [
-            {"slot": span["slot"], "text": span["text"]}
-            for span in spans
-        ]
-    }
+def render_target(spans: Iterable[Dict[str, object]], slot_names: Sequence[str]) -> str:
+    span_map: Dict[str, str] = {}
+    for span in spans:
+        slot = span.get("slot")
+        text = span.get("text")
+        if not isinstance(slot, str) or not isinstance(text, str):
+            continue
+        if slot not in span_map:
+            span_map[slot] = text
+
+    payload = {slot_name: span_map[slot_name] for slot_name in slot_names if slot_name in span_map}
     return json.dumps(payload, ensure_ascii=False)
 
 
@@ -118,7 +123,7 @@ def make_record(
     split_name: str,
     include_assistant: bool,
 ) -> Dict[str, object]:
-    target = render_target(example["spans"])
+    target = render_target(example["spans"], slot_names)
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {

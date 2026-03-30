@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
+.venv/
 outputs/
 data/eval_reports/
 data/snips_lodo/

@@ -2,6 +2,7 @@
 import argparse
 import json
 from collections import Counter
+from json import JSONDecodeError, JSONDecoder
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
@@ -52,9 +53,26 @@ def get_candidate_slots(record: Dict[str, object]) -> Optional[Set[str]]:
     return None
 
 
+def parse_json_payload(text: str) -> Tuple[Optional[object], bool]:
+    try:
+        return json.loads(text), False
+    except JSONDecodeError:
+        decoder = JSONDecoder()
+        for start_idx, char in enumerate(text):
+            if char != "{":
+                continue
+            try:
+                payload, _ = decoder.raw_decode(text[start_idx:])
+            except JSONDecodeError:
+                continue
+            return payload, True
+    return None, False
+
+
 def parse_target_text(text: str, candidate_slots: Optional[Set[str]]) -> Dict[str, object]:
     issues = {
         "invalid_json": False,
+        "recovered_json": False,
         "invalid_schema": False,
         "invalid_slot_name_count": 0,
         "invalid_text_count": 0,
@@ -63,31 +81,53 @@ def parse_target_text(text: str, candidate_slots: Optional[Set[str]]) -> Dict[st
     valid_spans: List[Span] = []
     seen: Set[Span] = set()
 
-    try:
-        payload = json.loads(text)
-    except json.JSONDecodeError:
+    payload, recovered_json = parse_json_payload(text)
+    if payload is None:
         issues["invalid_json"] = True
         return {"spans": [], "issues": issues}
+    issues["recovered_json"] = recovered_json
 
-    if not isinstance(payload, dict) or not isinstance(payload.get("slots"), list):
+    if not isinstance(payload, dict):
         issues["invalid_schema"] = True
         return {"spans": [], "issues": issues}
 
-    for item in payload["slots"]:
-        if not isinstance(item, dict):
-            issues["invalid_schema"] = True
-            continue
-        slot = item.get("slot")
-        text_value = item.get("text")
+    if isinstance(payload.get("slots"), list):
+        for item in payload["slots"]:
+            if not isinstance(item, dict):
+                issues["invalid_schema"] = True
+                continue
+            slot = item.get("slot")
+            text_value = item.get("text")
+            if not isinstance(slot, str) or not slot:
+                issues["invalid_schema"] = True
+                continue
+            if candidate_slots is not None and slot not in candidate_slots:
+                issues["invalid_slot_name_count"] += 1
+                continue
+            if not isinstance(text_value, str):
+                issues["invalid_text_count"] += 1
+                continue
+            span = (slot, text_value)
+            if span in seen:
+                issues["duplicate_prediction_count"] += 1
+                continue
+            seen.add(span)
+            valid_spans.append(span)
+        return {"spans": valid_spans, "issues": issues}
+
+    for slot, text_value in payload.items():
         if not isinstance(slot, str) or not slot:
             issues["invalid_schema"] = True
             continue
         if candidate_slots is not None and slot not in candidate_slots:
             issues["invalid_slot_name_count"] += 1
             continue
+        if text_value is None:
+            continue
         if not isinstance(text_value, str):
             issues["invalid_text_count"] += 1
             continue
+
         span = (slot, text_value)
         if span in seen:
             issues["duplicate_prediction_count"] += 1
@@ -149,6 +189,7 @@ def main() -> None:
     tp = fp = fn = 0
     exact_match_count = 0
     invalid_json_count = 0
+    recovered_json_count = 0
     invalid_schema_count = 0
     invalid_slot_name_count = 0
     invalid_text_count = 0
@@ -170,6 +211,7 @@ def main() -> None:
             pred_spans: Set[Span] = set()
             pred_issues = {
                 "invalid_json": False,
+                "recovered_json": False,
                 "invalid_schema": False,
                 "invalid_slot_name_count": 0,
                 "invalid_text_count": 0,
@@ -182,6 +224,7 @@ def main() -> None:
             pred_issues = pred_parsed["issues"]
 
         invalid_json_count += int(pred_issues["invalid_json"])
+        recovered_json_count += int(pred_issues["recovered_json"])
         invalid_schema_count += int(pred_issues["invalid_schema"])
         invalid_slot_name_count += int(pred_issues["invalid_slot_name_count"])
         invalid_text_count += int(pred_issues["invalid_text_count"])
@@ -226,6 +269,7 @@ def main() -> None:
             "fn": fn,
             "exact_match": exact_match_count,
             "invalid_json": invalid_json_count,
+            "recovered_json": recovered_json_count,
             "invalid_schema": invalid_schema_count,
             "invalid_slot_name": invalid_slot_name_count,
             "invalid_text": invalid_text_count,

@@ -96,7 +96,7 @@ def t5_record(example: Dict[str, object], split_name: str, slot_names: Sequence[
         "split": split_name,
         "domain": example["domain"],
         "input_text": render_user_prompt(str(example["domain"]), slot_names, str(example["utterance"])),
-        "target_text": render_target(example["spans"]),
+        "target_text": render_target(example["spans"], slot_names),
         "utterance": example["utterance"],
         "candidate_slot_names": list(slot_names),
         "spans": example["spans"],
