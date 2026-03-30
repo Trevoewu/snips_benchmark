@@ -33,31 +33,3 @@
  33 - [ ] Data splits identical across all runs
  34 - [ ] Experiment spec written to `experiments/todo.md` before launching
  35 - [ ] Results logged to `experiments/results.md` with charts
- 36
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-"AGENT.md" 36L, 1790B

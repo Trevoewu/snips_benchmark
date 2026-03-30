@@ -10,6 +10,7 @@ import shutil
 from contextlib import nullcontext
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from collections import Counter
 
 # This trainer is PyTorch-only; disabling TF/Flax avoids optional import failures.
 os.environ.setdefault("USE_TF", "0")
@@ -510,6 +511,7 @@ def generate_predictions(
     total_tp = total_fp = total_fn = 0
     exact_match = 0
     per_subset: Dict[str, Dict[str, int]] = {}
+    per_slot: Dict[str, Counter[str]] = {}
     prediction_rows: List[Dict[str, object]] = []
 
     for batch in loader:
@@ -563,6 +565,13 @@ def generate_predictions(
             subset_counts["examples"] += 1
             subset_counts["exact_match"] += is_exact
 
+            for slot, _ in gold_spans & pred_spans:
+                per_slot.setdefault(slot, Counter()).update(tp=1)
+            for slot, _ in pred_spans - gold_spans:
+                per_slot.setdefault(slot, Counter()).update(fp=1)
+            for slot, _ in gold_spans - pred_spans:
+                per_slot.setdefault(slot, Counter()).update(fn=1)
+
             prediction_rows.append(
                 {
                     "id": example_id,
@@ -588,6 +597,7 @@ def generate_predictions(
             "exact_match": safe_div(exact_match, len(records)),
         },
         "per_subset": {},
+        "per_slot": {},
     }
     for subset, counts in sorted(per_subset.items()):
         report["per_subset"][subset] = {
@@ -596,6 +606,16 @@ def generate_predictions(
             "recall": safe_div(counts["tp"], counts["tp"] + counts["fn"]),
             "micro_f1": f1_score(counts["tp"], counts["fp"], counts["fn"]),
             "exact_match": safe_div(counts["exact_match"], counts["examples"]),
+        }
+    for slot, counts in sorted(per_slot.items()):
+        slot_tp = counts["tp"]
+        slot_fp = counts["fp"]
+        slot_fn = counts["fn"]
+        report["per_slot"][slot] = {
+            "precision": safe_div(slot_tp, slot_tp + slot_fp),
+            "recall": safe_div(slot_tp, slot_tp + slot_fn),
+            "f1": f1_score(slot_tp, slot_fp, slot_fn),
+            "support": slot_tp + slot_fn,
         }
 
     if output_path is not None:

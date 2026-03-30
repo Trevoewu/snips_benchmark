@@ -58,8 +58,8 @@ python3 scripts/train_llama_sft.py \
   --learning-rate 2e-4 \
   --warmup-ratio 0.03 \
   --scheduler cosine \
-  --train-batch-size 1 \
-  --eval-batch-size 4 \
+  --train-batch-size 4 \
+  --eval-batch-size 2 \
   --gradient-accumulation-steps 8 \
   --max-seq-length 512 \
   --max-new-tokens 160 \
