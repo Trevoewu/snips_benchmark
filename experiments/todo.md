@@ -9,6 +9,7 @@ Evaluate leave-one-domain-out SNIPS slot extraction with instruction-tuned causa
 - Data source: `data/snips/`
 - LODO folds: `data/snips_lodo/`
 - Instruction data: `data/snips_lodo_llama/`
+- MRC baseline data: `data/snips_lodo_mrc/`
 - Held-out protocol: train on 6 domains, test on 1 held-out domain
 - Prompt input: domain, allowed slot names, utterance
 - Target format: sparse JSON object with only present slots
@@ -50,10 +51,10 @@ Evaluate leave-one-domain-out SNIPS slot extraction with instruction-tuned causa
 
 ## Priority Runs
 
-1. Finish `BookRestaurant` rerun with the patched eval path.
-2. Keep `AddToPlaylist` as the reference pilot result.
-3. If `BookRestaurant` is stable, launch more folds.
-4. Add a strong non-generative baseline next (`DeBERTa-v3` or similar).
+1. Finish the remaining `DeBERTa-v3` MRC folds.
+2. Compare MRC vs Qwen on seen and unseen subsets.
+3. Decide whether a token-classification baseline is still worth adding after the MRC baseline.
+4. Keep the Qwen adapter release as the current main generative reference.
 
 ## Notes
 

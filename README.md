@@ -1,6 +1,6 @@
 # snips_benchmark
 
-See `AGENT.md`, `experiments/todo.md`, and `research/lab_notebook.md` for the experiment context.
+See `AGENT.md`, `experiments/todo.md`, `research/lab_notebook.md`, and `implementation_detail.md` for experiment context and paper-style implementation details.
 
 ## Repo layout
 
@@ -43,6 +43,7 @@ This runs, in order:
 ## Qwen Release
 
 - Hugging Face repo: `l0ulan/qwen3-4b-snips-lodo`
+- Direct link: https://huggingface.co/l0ulan/qwen3-4b-snips-lodo
 - Contents: one Qwen 3 4B LoRA adapter per held-out SNIPS fold under a fold subfolder
 - Base model expected at load time: `Qwen/Qwen3-4B`
 

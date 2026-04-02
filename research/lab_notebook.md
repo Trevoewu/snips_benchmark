@@ -1,5 +1,29 @@
 # Lab Notebook
 
+## 2026-04-02
+
+### What changed
+- Added `experiments/snips_mrc_templates.json` for domain-specific slot questions.
+- Added `scripts/build_mrc_slot_data.py` to expand each fold into extractive QA examples under `data/snips_lodo_mrc/`.
+- Added `scripts/train_mrc_slot_model.py` for fold-wise `microsoft-deberta-v3-large` MRC training with dev-threshold selection and utterance-level span scoring.
+
+### Why
+- A standard BIO tagger is not a fair primary baseline for truly unseen slot labels.
+- An MRC-style baseline is closer to the pre-LLM zero-shot setting because it conditions on slot-specific questions at inference time.
+
+### Outcome
+- The MRC pipeline runs end-to-end on `AddToPlaylist` and writes comparable `test_all`, `test_seen_slots`, and `test_unseen_slots` reports.
+- Current completed MRC pilot result on `AddToPlaylist`:
+  - dev micro-F1 `0.1318`
+  - test micro-F1 `0.5694`
+  - seen micro-F1 `0.6829`
+  - unseen micro-F1 `0.5294`
+- The strongest current weakness on that fold is slot coverage for `entity_name` and `playlist_owner`, both at `0.0000` F1.
+
+### Follow-up
+- Finish the remaining six MRC folds and compare them directly against the Qwen release.
+- If MRC remains weak on key unseen slots, inspect question wording and no-answer thresholding on dev only.
+
 ## 2026-03-30
 
 ### What changed

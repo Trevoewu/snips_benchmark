@@ -126,3 +126,22 @@ Worst per-slot failures across all seven folds
 Notes
 - Earlier pilot evaluations were sensitive to generation formatting and padding behavior.
 - `AddToPlaylist` test reports were re-run with the patched eval path and now replace the older saved outputs.
+
+### DeBERTa-v3 MRC Baseline
+
+Setup
+- Model: `/data/public_model/microsoft-deberta-v3-large`
+- Method: extractive MRC slot filling
+- Script: `scripts/train_mrc_slot_model.py`
+- Seed: `42`
+
+Completed folds
+
+| Fold | Best epoch | Dev micro-F1 | Test all | Seen | Unseen | Exact match |
+| --- | --- | --- | --- | --- | --- | --- |
+| `AddToPlaylist` | `3` | `0.1318` | `0.5694` | `0.6829` | `0.5294` | `0.1022` |
+
+Notes
+- Current completed MRC evidence is only for `AddToPlaylist`.
+- Compared with Qwen on the same fold, DeBERTa MRC is lower on `test_all` (`0.5694` vs `0.7017`).
+- Weakest `AddToPlaylist` slots in the MRC run: `entity_name` `0.0000`, `playlist_owner` `0.0000`.
