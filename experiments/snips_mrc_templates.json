@@ -1,0 +1,69 @@
+{
+  "AddToPlaylist": [
+    {"slot": "music_item", "slot_name": "music item", "question": "what’s the music item?"},
+    {"slot": "playlist_owner", "slot_name": "owner", "question": "who’s the owner?"},
+    {"slot": "entity_name", "slot_name": "entity name", "question": "what’s the entity name?"},
+    {"slot": "playlist", "slot_name": "playlist", "question": "what’s the playlist?"},
+    {"slot": "artist", "slot_name": "artist", "question": "who’s the artist?"}
+  ],
+  "BookRestaurant": [
+    {"slot": "city", "slot_name": "city", "question": "what’s the city?"},
+    {"slot": "facility", "slot_name": "facility", "question": "what’s the facility?"},
+    {"slot": "timeRange", "slot_name": "time range", "question": "when’s the time range?"},
+    {"slot": "restaurant_name", "slot_name": "restaurant name", "question": "what’s the name?"},
+    {"slot": "country", "slot_name": "country", "question": "what’s the country?"},
+    {"slot": "cuisine", "slot_name": "cuisine", "question": "what’s the cuisine?"},
+    {"slot": "restaurant_type", "slot_name": "restaurant type", "question": "what’s the restaurant type?"},
+    {"slot": "served_dish", "slot_name": "served dish", "question": "what’s the served dish?"},
+    {"slot": "party_size_number", "slot_name": "number", "question": "how many people?"},
+    {"slot": "poi", "slot_name": "position", "question": "where’s the location?"},
+    {"slot": "sort", "slot_name": "type", "question": "what’s the type?"},
+    {"slot": "spatial_relation", "slot_name": "spatial relation", "question": "what’s the spatial relation?"},
+    {"slot": "state", "slot_name": "location", "question": "what’s the state?"},
+    {"slot": "party_size_description", "slot_name": "person", "question": "who are the persons?"}
+  ],
+  "GetWeather": [
+    {"slot": "city", "slot_name": "city", "question": "what’s the city?"},
+    {"slot": "state", "slot_name": "location", "question": "what’s the state?"},
+    {"slot": "timeRange", "slot_name": "time range", "question": "when’s the time range?"},
+    {"slot": "current_location", "slot_name": "current location", "question": "what’s the current location?"},
+    {"slot": "country", "slot_name": "country", "question": "what’s the country?"},
+    {"slot": "spatial_relation", "slot_name": "spatial relation", "question": "what’s the spatial relation?"},
+    {"slot": "geographic_poi", "slot_name": "geographic position", "question": "where’s the location?"},
+    {"slot": "condition_temperature", "slot_name": "temperature", "question": "how is the temperature?"},
+    {"slot": "condition_description", "slot_name": "weather", "question": "how is the weather?"}
+  ],
+  "PlayMusic": [
+    {"slot": "genre", "slot_name": "genre", "question": "what’s the genre?"},
+    {"slot": "music_item", "slot_name": "music item", "question": "what’s the music item?"},
+    {"slot": "service", "slot_name": "service", "question": "what’s the service?"},
+    {"slot": "year", "slot_name": "year", "question": "when’s the year?"},
+    {"slot": "playlist", "slot_name": "playlist", "question": "what’s the playlist?"},
+    {"slot": "album", "slot_name": "album", "question": "what’s the album?"},
+    {"slot": "sort", "slot_name": "type", "question": "what’s the type?"},
+    {"slot": "track", "slot_name": "track", "question": "what’s the track?"},
+    {"slot": "artist", "slot_name": "artist", "question": "who’s the artist?"}
+  ],
+  "RateBook": [
+    {"slot": "object_part_of_series_type", "slot_name": "series", "question": "what’s the series?"},
+    {"slot": "object_select", "slot_name": "this current", "question": "which to select?"},
+    {"slot": "rating_value", "slot_name": "rating value", "question": "how many rating value?"},
+    {"slot": "object_name", "slot_name": "object name", "question": "what’s the object name?"},
+    {"slot": "object_type", "slot_name": "object type", "question": "what’s the object type?"},
+    {"slot": "rating_unit", "slot_name": "rating unit", "question": "what’s the rating unit?"},
+    {"slot": "best_rating", "slot_name": "best rating", "question": "how many rating points in total?"}
+  ],
+  "SearchCreativeWork": [
+    {"slot": "object_name", "slot_name": "object name", "question": "what’s the object name?"},
+    {"slot": "object_type", "slot_name": "object type", "question": "what’s the object type?"}
+  ],
+  "SearchScreeningEvent": [
+    {"slot": "timeRange", "slot_name": "time range", "question": "when’s the time range?"},
+    {"slot": "movie_type", "slot_name": "movie type", "question": "what’s the movie type?"},
+    {"slot": "object_location_type", "slot_name": "location type", "question": "what’s the location type?"},
+    {"slot": "object_type", "slot_name": "object type", "question": "what’s the object type?"},
+    {"slot": "location_name", "slot_name": "location name", "question": "where’s the location name?"},
+    {"slot": "spatial_relation", "slot_name": "spatial relation", "question": "what’s the spatial relation?"},
+    {"slot": "movie_name", "slot_name": "movie name", "question": "what’s the movie name?"}
+  ]
+}

@@ -232,6 +232,14 @@ class SFTDataset(Dataset):
             prompt_len = min(len(prompt_ids), len(full_ids))
             labels = [-100] * prompt_len + full_ids[prompt_len:]
             if all(label == -100 for label in labels):
+                # Some chat templates render a generation prompt that tokenizes longer than
+                # the full conversation. Fall back to supervising just the JSON target suffix.
+                target_ids = tokenizer(
+                    str(record["target"]), add_special_tokens=False
+                ).input_ids
+                target_len = min(len(target_ids), len(full_ids))
+                labels = [-100] * (len(full_ids) - target_len) + full_ids[-target_len:]
+            if all(label == -100 for label in labels):
                 continue
             self.examples.append(
                 {
@@ -298,7 +306,7 @@ class TrainCollator:
 
 
 def prompt_collator(
-    tokenizer: AutoTokenizer, batch: Sequence[Dict[str, object]]
+    tokenizer: AutoTokenizer, batch: Sequence[Dict[str, object]], max_seq_length: int
 ) -> Dict[str, object]:
     prompts = [example["prompt_text"] for example in batch]
     original_padding_side = tokenizer.padding_side
@@ -309,7 +317,7 @@ def prompt_collator(
             return_tensors="pt",
             padding=True,
             truncation=True,
-            max_length=tokenizer.model_max_length,
+            max_length=max_seq_length,
         )
     finally:
         tokenizer.padding_side = original_padding_side
@@ -485,6 +493,7 @@ def generate_predictions(
     tokenizer: AutoTokenizer,
     records: Sequence[Dict[str, object]],
     batch_size: int,
+    max_seq_length: int,
     max_new_tokens: int,
     device: torch.device,
     output_path: Optional[Path] = None,
@@ -504,7 +513,7 @@ def generate_predictions(
         dataset,
         batch_size=batch_size,
         shuffle=False,
-        collate_fn=lambda batch: prompt_collator(tokenizer, batch),
+        collate_fn=lambda batch: prompt_collator(tokenizer, batch, max_seq_length),
     )
 
     model.eval()
@@ -721,6 +730,7 @@ def main() -> None:
             tokenizer,
             records["dev"],
             batch_size=args.eval_batch_size,
+            max_seq_length=args.max_seq_length,
             max_new_tokens=args.max_new_tokens,
             device=device,
             output_path=dev_pred_path,
@@ -775,6 +785,7 @@ def main() -> None:
                 tokenizer,
                 records[split_name],
                 batch_size=args.eval_batch_size,
+                max_seq_length=args.max_seq_length,
                 max_new_tokens=args.max_new_tokens,
                 device=device,
                 output_path=pred_path,

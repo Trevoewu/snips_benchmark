@@ -6,5 +6,6 @@ outputs/
 data/eval_reports/
 data/snips_lodo/
 data/snips_lodo_llama/
+data/snips_lodo_mrc/
 data/snips_lodo_t5/
 data/snips_lodo_tokencls/
