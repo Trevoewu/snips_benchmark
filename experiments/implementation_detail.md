@@ -104,8 +104,8 @@ Decoding:
 
 - Optimization: AdamW
 - Seed: `42`
-- Epoch cap: `6`
-- Early stopping patience: `1`
+- Epoch cap: `8`
+- Early stopping patience: `3`
 - Learning rate: `3e-5`
 - Weight decay: `0.0`
 - Warmup ratio: `0.06`
@@ -122,6 +122,7 @@ Checkpoint selection:
 - Dev QA predictions are aggregated back to utterance-level slot outputs after each epoch.
 - A no-answer threshold is selected on the dev set by maximizing dev micro-F1, then dev exact match, then preferring the less aggressive threshold.
 - The best checkpoint is selected by dev micro-F1, then dev exact match, then lower dev loss.
+- A longer patience window is used for MRC than for Qwen SFT because thresholded dev micro-F1 is substantially noisier.
 
 ## Evaluation
 

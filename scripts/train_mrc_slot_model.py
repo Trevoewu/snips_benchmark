@@ -46,8 +46,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--fold", type=str, required=True)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--epochs", type=int, default=6)
-    parser.add_argument("--patience-epochs", type=int, default=1)
+    parser.add_argument("--epochs", type=int, default=8)
+    parser.add_argument("--patience-epochs", type=int, default=3)
     parser.add_argument("--learning-rate", type=float, default=3e-5)
     parser.add_argument("--weight-decay", type=float, default=0.0)
     parser.add_argument("--warmup-ratio", type=float, default=0.06)
@@ -506,8 +506,11 @@ def qa_gold_answer(record: Dict[str, object]) -> str:
     return ""
 
 
-def utterance_gold_payload(metadata: Dict[str, object]) -> str:
+def utterance_gold_payload(
+    metadata: Dict[str, object], allowed_slots: Sequence[str]
+) -> str:
     spans = metadata.get("spans", []) if isinstance(metadata, dict) else []
+    allowed = set(allowed_slots)
     payload: Dict[str, str] = {}
     if isinstance(spans, list):
         for span in spans:
@@ -515,7 +518,12 @@ def utterance_gold_payload(metadata: Dict[str, object]) -> str:
                 continue
             slot = span.get("slot")
             text = span.get("text")
-            if isinstance(slot, str) and isinstance(text, str) and slot not in payload:
+            if (
+                isinstance(slot, str)
+                and isinstance(text, str)
+                and slot in allowed
+                and slot not in payload
+            ):
                 payload[slot] = text
     return json.dumps(payload, ensure_ascii=False)
 
@@ -541,10 +549,11 @@ def evaluate_grouped_predictions(
                 "id": example_id,
                 "prediction_map": {},
                 "metadata": prediction["metadata"],
-                "target": utterance_gold_payload(prediction["metadata"]),
+                "gold_slots": set(),
                 "qa_predictions": [],
             },
         )
+        row["gold_slots"].add(str(prediction["slot"]))
         predicted_text = ""
         if float(prediction["score_diff"]) > threshold:
             predicted_text = str(prediction["text"]).strip()
@@ -568,6 +577,9 @@ def evaluate_grouped_predictions(
     rows: List[Dict[str, object]] = []
 
     for example_id, row in sorted(grouped_rows.items()):
+        row["target"] = utterance_gold_payload(
+            row["metadata"], sorted(row["gold_slots"])
+        )
         prediction_text = json.dumps(row["prediction_map"], ensure_ascii=False)
         candidate_slots = get_candidate_slots({"metadata": row["metadata"]})
         gold_spans = set(parse_target_text(row["target"], candidate_slots)["spans"])

@@ -51,10 +51,9 @@ Evaluate leave-one-domain-out SNIPS slot extraction with instruction-tuned causa
 
 ## Priority Runs
 
-1. Finish the remaining `DeBERTa-v3` MRC folds.
-2. Compare MRC vs Qwen on seen and unseen subsets.
-3. Decide whether a token-classification baseline is still worth adding after the MRC baseline.
-4. Keep the Qwen adapter release as the current main generative reference.
+1. Re-run the `DeBERTa-v3` MRC sweep on the corrected source-domain question protocol.
+2. Compare corrected MRC vs Qwen on seen and unseen subsets.
+3. Keep the Qwen adapter release as the current main generative reference.
 
 ## Notes
 

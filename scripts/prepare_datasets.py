@@ -7,7 +7,7 @@ from pathlib import Path
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Regenerate all derived SNIPS artifacts."
+        description="Regenerate the active SNIPS artifacts for LLM and MRC experiments."
     )
     parser.add_argument(
         "--dedupe", action="store_true", help="Pass --dedupe to data builders."
@@ -31,9 +31,6 @@ def main() -> None:
         common + [str(repo_root / "scripts/build_llama_slot_data.py")] + maybe_dedupe
     )
     run_step(common + [str(repo_root / "scripts/build_mrc_slot_data.py")])
-    run_step(
-        common + [str(repo_root / "scripts/build_baseline_data.py")] + maybe_dedupe
-    )
     run_step(
         common
         + [

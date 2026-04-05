@@ -82,7 +82,7 @@ def build_examples(
     fold: str,
     split_name: str,
     records: Iterable[Dict[str, object]],
-    templates: Sequence[Dict[str, str]],
+    templates_by_domain: Dict[str, List[Dict[str, str]]],
 ) -> List[Dict[str, object]]:
     examples: List[Dict[str, object]] = []
     for record in records:
@@ -126,6 +126,16 @@ def build_examples(
             "heldout_fold": fold,
         }
 
+        if not isinstance(domain, str) or domain not in templates_by_domain:
+            raise ValueError(f"Missing templates for example domain {domain!r}")
+
+        template_domain = domain if split_name in {"train", "dev"} else fold
+        if template_domain not in templates_by_domain:
+            raise ValueError(
+                f"Missing templates for template domain {template_domain!r}"
+            )
+
+        templates = templates_by_domain[template_domain]
         for template in templates:
             slot = template["slot"]
             slot_name = template["slot_name"]
@@ -183,13 +193,12 @@ def main() -> None:
         if fold not in templates:
             raise ValueError(f"Missing templates for fold {fold}")
 
-        fold_templates = templates[fold]
         for split_name in split_names:
             input_path = fold_dir / f"{split_name}.jsonl"
             if not input_path.exists():
                 continue
             records = read_jsonl(input_path)
-            output_records = build_examples(fold, split_name, records, fold_templates)
+            output_records = build_examples(fold, split_name, records, templates)
             write_jsonl(args.output_root / fold / f"{split_name}.jsonl", output_records)
 
 

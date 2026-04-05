@@ -9,8 +9,6 @@ See `AGENT.md`, `experiments/todo.md`, `research/lab_notebook.md`, and `implemen
   - `data/snips_lodo/`
   - `data/snips_lodo_llama/`
   - `data/snips_lodo_mrc/`
-  - `data/snips_lodo_t5/`
-  - `data/snips_lodo_tokencls/`
   - `data/eval_reports/`
 
 Those derived directories are intentionally ignored by git. Regenerate them after cloning.
@@ -28,16 +26,13 @@ This runs, in order:
 1. `scripts/build_snips_lodo.py`
 2. `scripts/build_llama_slot_data.py`
 3. `scripts/build_mrc_slot_data.py`
-4. `scripts/build_baseline_data.py`
-5. `scripts/evaluate_slot_json.py` on a gold-vs-gold sanity check
+4. `scripts/evaluate_slot_json.py` on a gold-vs-gold sanity check
 
 ## Generated artifacts
 
 - Fold metadata: `data/snips_lodo/summary.json`
 - Llama SFT data: `data/snips_lodo_llama/summary.json`
 - MRC baseline data: `data/snips_lodo_mrc/`
-- Token classification baseline data: `data/snips_lodo_tokencls/summary.json`
-- T5 baseline data: `data/snips_lodo_t5/summary.json`
 - Evaluator sanity check: `data/eval_reports/addtoplaylist_gold_eval.json`
 
 ## Qwen Release
@@ -104,8 +99,8 @@ python3 scripts/train_mrc_slot_model.py \
   --gold-root data/snips_lodo_llama \
   --output-root outputs/deberta_v3_mrc \
   --seed 42 \
-  --epochs 6 \
-  --patience-epochs 1 \
+  --epochs 8 \
+  --patience-epochs 3 \
   --learning-rate 3e-5 \
   --warmup-ratio 0.06 \
   --scheduler linear \
@@ -122,4 +117,5 @@ python3 scripts/train_mrc_slot_model.py \
 
 - `bitsandbytes` is required for true 4-bit QLoRA; otherwise `--auto-4bit` falls back to regular LoRA.
 - Model selection is based on dev JSON extraction micro-F1, not dev loss.
+- The MRC baseline uses a longer patience window (`patience_epochs=3`) because dev micro-F1 is thresholded and noticeably noisier than loss.
 - Full experiment results live in `experiments/results.md`.

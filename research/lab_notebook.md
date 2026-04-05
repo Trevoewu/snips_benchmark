@@ -24,6 +24,10 @@
 - Finish the remaining six MRC folds and compare them directly against the Qwen release.
 - If MRC remains weak on key unseen slots, inspect question wording and no-answer thresholding on dev only.
 
+### Update
+- The initial MRC sweep stopped too aggressively for several folds under `epochs=6` and `patience_epochs=1`.
+- The default MRC configuration was updated to `epochs=8` and `patience_epochs=3` to better tolerate noisy thresholded dev micro-F1.
+
 ## 2026-03-30
 
 ### What changed
