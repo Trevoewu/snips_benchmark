@@ -1,0 +1,286 @@
+{
+    "functions": [
+        {
+            "name": "AddToPlaylist",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "artist": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "entity_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "music_item": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "playlist": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "playlist_owner": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "BookRestaurant",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "cuisine": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "facility": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "party_size_description": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "party_size_number": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "poi": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "restaurant_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "restaurant_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "served_dish": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "sort": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "spatial_relation": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "timeRange": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "GetWeather",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "condition_description": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "condition_temperature": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "current_location": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "geographic_poi": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "spatial_relation": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "timeRange": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "PlayMusic",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "album": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "artist": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "genre": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "music_item": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "playlist": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "service": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "sort": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "track": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "year": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "RateBook",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "best_rating": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_part_of_series_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_select": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "rating_unit": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "rating_value": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "SearchCreativeWork",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "object_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_type": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        },
+        {
+            "name": "SearchScreeningEvent",
+            "description": "",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "movie_name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "movie_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_location_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "object_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "spatial_relation": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "timeRange": {
+                        "type": "string",
+                        "description": ""
+                    }
+                },
+                "required": []
+            }
+        }
+    ]
+}

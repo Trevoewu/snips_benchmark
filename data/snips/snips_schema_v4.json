@@ -1,0 +1,287 @@
+{
+  "functions": [
+    {
+      "name": "AddToPlaylist",
+      "description": "Add a specified music item to a named playlist.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "artist": {
+            "type": "string",
+            "description": "The name of the musical artist to add to the playlist."
+          },
+          "entity_name": {
+            "type": "string",
+            "description": "The name of the specific music item to add, such as a song, album, or track title."
+          },
+          "music_item": {
+            "type": "string",
+            "description": "A word describing the type of music item to add, such as 'artist', 'song', 'track', or 'album'."
+          },
+          "playlist": {
+            "type": "string",
+            "description": "The name of the playlist to which the music item is added."
+          },
+          "playlist_owner": {
+            "type": "string",
+            "description": "The owner of the playlist, indicated by a possessive pronoun like 'my' or a person's name."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "BookRestaurant",
+      "description": "Request to book a reservation at a restaurant, including the restaurant name, location, party size, time, cuisine, or selection criteria.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "The city where the restaurant is located."
+          },
+          "country": {
+            "type": "string",
+            "description": "The country where the restaurant is located."
+          },
+          "cuisine": {
+            "type": "string",
+            "description": "The type of cuisine served at the restaurant."
+          },
+          "facility": {
+            "type": "string",
+            "description": "A specific facility or amenity associated with the restaurant."
+          },
+          "party_size_description": {
+            "type": "string",
+            "description": "A textual description of the dining party, such as names or a group identifier."
+          },
+          "party_size_number": {
+            "type": "string",
+            "description": "The number of people in the dining party."
+          },
+          "poi": {
+            "type": "string",
+            "description": "A point of interest or specific location near which the restaurant should be located."
+          },
+          "restaurant_name": {
+            "type": "string",
+            "description": "The name of the restaurant."
+          },
+          "restaurant_type": {
+            "type": "string",
+            "description": "The category or style of the dining establishment, such as pub, bar, or restaurant."
+          },
+          "served_dish": {
+            "type": "string",
+            "description": "A specific dish or food item served at the restaurant."
+          },
+          "sort": {
+            "type": "string",
+            "description": "A criterion for selecting or ranking restaurants, such as popularity."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A spatial description of the restaurant's location relative to another place."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state, province, or territory where the restaurant is located."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "The time or time range for the reservation, which may be a specific time, a relative time, or a time of day."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "GetWeather",
+      "description": "Request current weather conditions or forecasts for a location, time, or specific weather attribute.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "The name of a city for the weather request."
+          },
+          "condition_description": {
+            "type": "string",
+            "description": "A descriptive term for a specific weather condition or event, such as 'foggy' or 'snowstorm'."
+          },
+          "condition_temperature": {
+            "type": "string",
+            "description": "A descriptive term for the temperature condition, such as 'hot', 'cold', or a comparative like 'hotter' or 'colder'."
+          },
+          "country": {
+            "type": "string",
+            "description": "The name of a country for the weather request."
+          },
+          "current_location": {
+            "type": "string",
+            "description": "A reference to the user's present location, such as 'here' or 'current location'."
+          },
+          "geographic_poi": {
+            "type": "string",
+            "description": "The name of a geographic point of interest, such as a national monument, park, or nature reserve, for the weather request."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A term describing proximity or spatial relationship to a location, such as 'nearby', 'distant', or 'same'."
+          },
+          "state": {
+            "type": "string",
+            "description": "The name of a state, province, or region for the weather request."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "A specific time, date, or period for the weather forecast or condition, such as 'next saturday', '11 am', 'in 19 hours', or 'meal time'."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "PlayMusic",
+      "description": "Play music or audio content, specifying details such as artist, track, album, genre, playlist, year, music service, or sorting preference.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "album": {
+            "type": "string",
+            "description": "The name of the album containing the music to play."
+          },
+          "artist": {
+            "type": "string",
+            "description": "The name of the artist or performer of the music to play."
+          },
+          "genre": {
+            "type": "string",
+            "description": "The musical genre or style of the content to play."
+          },
+          "music_item": {
+            "type": "string",
+            "description": "The type of audio content to play, such as 'song', 'track', 'tune', 'album', or 'theme'."
+          },
+          "playlist": {
+            "type": "string",
+            "description": "The name of a playlist to play."
+          },
+          "service": {
+            "type": "string",
+            "description": "The music streaming service or platform to use for playback."
+          },
+          "sort": {
+            "type": "string",
+            "description": "The sorting or selection criteria for playing music, such as 'popular' or 'newest'."
+          },
+          "track": {
+            "type": "string",
+            "description": "The name of a specific song or track to play."
+          },
+          "year": {
+            "type": "string",
+            "description": "The year, era, or decade associated with the music to play, such as 'fifties' or 'fourties'."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "RateBook",
+      "description": "Assign a rating to a specific creative work. The rating is expressed as a value on a scale, which may be numeric or textual, and may include the scale's maximum value and unit.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "best_rating": {
+            "type": "string",
+            "description": "The highest possible value on the rating scale, such as '6'."
+          },
+          "object_name": {
+            "type": "string",
+            "description": "The title or name of the creative work being rated."
+          },
+          "object_part_of_series_type": {
+            "type": "string",
+            "description": "The type of series the creative work belongs to, such as 'series' or 'saga'."
+          },
+          "object_select": {
+            "type": "string",
+            "description": "A demonstrative or specific selector for the work, such as 'current'."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The category of the creative work, such as 'novel'."
+          },
+          "rating_unit": {
+            "type": "string",
+            "description": "The unit in which the rating is expressed, such as 'stars' or 'points'."
+          },
+          "rating_value": {
+            "type": "string",
+            "description": "The rating assigned to the work, such as 'one', 'two', or '3'."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchCreativeWork",
+      "description": "Search for a creative work by its title, where the type of work may be specified.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "object_name": {
+            "type": "string",
+            "description": "The title or name of the creative work to search for."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The specific medium or category of the creative work, such as saga, painting, album, or photograph."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchScreeningEvent",
+      "description": "Search for movie screenings, showtimes, or film events. This includes finding schedules for specific movies or venues, locating screenings based on proximity, time, or movie type, and requesting general showtime information.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location_name": {
+            "type": "string",
+            "description": "The specific name of a cinema, theater chain, or venue where movies are shown, such as 'AMC Theaters', 'Regal Cinemas', or 'United Paramount Theatres'."
+          },
+          "movie_name": {
+            "type": "string",
+            "description": "The exact title of a movie for which the user wants to find screening details like showtimes or locations, e.g., 'The Wandering Detective: Black Wind in the Harbor' or 'Truth About Kerry'."
+          },
+          "movie_type": {
+            "type": "string",
+            "description": "The genre, category, or general type of movie, such as 'animated', 'drama', 'comedy', or a broad term like 'movies' or 'films'."
+          },
+          "object_location_type": {
+            "type": "string",
+            "description": "The type of venue or establishment where the screening occurs, such as 'cinema', 'movie theatre', 'movie house', or 'drive-in'."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The type of information or event being requested, such as a 'schedule', 'movie times', 'showtimes', 'screening', or 'showing'. This slot captures the core informational object the user is seeking."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A spatial descriptor indicating proximity or relative location for the screening venue, such as 'nearest', 'closest', 'in the neighborhood', 'near', 'local', 'around here', or 'in the area'."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "The time, date, or time period for the screening, such as 'tonight', 'this weekend', a specific date, a time of day like 'noon', or a relative time expression like '12 hours from now'."
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
+

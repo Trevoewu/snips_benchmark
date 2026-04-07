@@ -1,0 +1,287 @@
+{
+  "functions": [
+    {
+      "name": "AddToPlaylist",
+      "description": "Add a specified music item (e.g., a track, song, album, artist, or named musical work) to a named playlist. The request may specify the playlist owner and the specific music item to be added.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "artist": {
+            "type": "string",
+            "description": "The name of the artist, performer, or creator of the music item to be added. This can be the primary target of the addition (e.g., 'add this artist') or specify the artist of a track or album."
+          },
+          "entity_name": {
+            "type": "string",
+            "description": "The specific title or name of the music item to be added, such as a song title, album name, soundtrack name, or other named musical work (e.g., 'willie nelson live', 'sci-fi crimes')."
+          },
+          "music_item": {
+            "type": "string",
+            "description": "The general type or category of the music item being added, such as 'track', 'song', 'album', 'artist', or 'soundtrack'. This often clarifies the nature of the entity referenced (e.g., 'artist' in 'put this artist')."
+          },
+          "playlist": {
+            "type": "string",
+            "description": "The name or descriptive title of the playlist to which the music item should be added (e.g., 'political punks', 'acoustic blues', 'fresh folk')."
+          },
+          "playlist_owner": {
+            "type": "string",
+            "description": "The owner, creator, or person associated with the playlist, which may be indicated by possessive pronouns (e.g., 'my'), a person's name, or a possessive marker."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "BookRestaurant",
+      "description": "Make a reservation or booking for a restaurant or dining establishment. The request may specify details such as the restaurant's name, location (city, state, country, or point of interest), cuisine, type of establishment, specific dishes served, party size (numerical count or descriptive list of names/relationships), desired time or time range, desired features or amenities, sorting criteria, or spatial relations to another location.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "The city, town, or locality where the restaurant is located."
+          },
+          "country": {
+            "type": "string",
+            "description": "The country where the restaurant is located."
+          },
+          "cuisine": {
+            "type": "string",
+            "description": "The style or type of food served at the restaurant (e.g., Italian, Chinese, Ethiopian)."
+          },
+          "facility": {
+            "type": "string",
+            "description": "A specific facility, feature, or amenity associated with the restaurant (e.g., outdoor seating, parking, pool, spa)."
+          },
+          "party_size_description": {
+            "type": "string",
+            "description": "A descriptive phrase for the dining party, often listing the names or relationships of the people (e.g., 'my nephew and i', 'courtney and ruby', 'meredith betty and erika')."
+          },
+          "party_size_number": {
+            "type": "string",
+            "description": "The numerical count of people in the dining party, which may be expressed as a digit or word (e.g., '10', 'six', 'nine', '1')."
+          },
+          "poi": {
+            "type": "string",
+            "description": "A point of interest, landmark, or notable location near which the restaurant is located (e.g., a borough, district, street, specific landmark, or a person's location like 'fran s location')."
+          },
+          "restaurant_name": {
+            "type": "string",
+            "description": "The specific name of the restaurant (e.g., 'georgetown cupcake', 'cliff house', 'colony', 'bouchon')."
+          },
+          "restaurant_type": {
+            "type": "string",
+            "description": "The type or category of the dining establishment (e.g., 'restaurant', 'diner', 'pub', 'tea house', 'food court', 'gastropub', 'taverna', 'food truck', 'joint', 'cafeteria', 'brasserie', 'tavern')."
+          },
+          "served_dish": {
+            "type": "string",
+            "description": "A specific dish, meal type, or culinary item served at the restaurant (e.g., 'meze', 'american chinese cuisine', 'vegan', 'burger', 'burrito', 'chicken divan', 'ankimo', 'gnocchi')."
+          },
+          "sort": {
+            "type": "string",
+            "description": "A criterion for sorting, filtering, or selecting restaurants, such as rating, popularity, or other quality (e.g., 'popular', 'highly rated')."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A spatial descriptor relating the restaurant's location to another reference point (e.g., 'near', 'in the center of', 'same distance as', 'close', 'close-by', 'faraway', 'in the same area')."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state, province, or region where the restaurant is located, which may be expressed as an abbreviation or full name (e.g., 'fl', 'alaska', 'ri', 'fm', 'pw', 'federated states of micronesia')."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "The time, date, or time period for the reservation, which can be absolute (e.g., 'june 23rd 2040', 'july 16th 2022', 'oct 17'), relative (e.g., 'next year', 'in twenty hours', 'next autumn', 'three years from now'), refer to a season or meal time (e.g., 'tea', 'this winter'), or indicate a duration or deadline (e.g., 'in one second')."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "GetWeather",
+      "description": "Retrieve current, forecasted, or historical weather information for a specified location, area, or point of interest. The location can be defined by administrative divisions (city, state, country), a named geographic point of interest, a relative spatial relation to a reference point (including the user's current location), or a combination thereof. The query can specify a time or time period (absolute, relative, or duration) and may include descriptive constraints on weather conditions (e.g., rain, snow, windy, overcast) or temperature (e.g., warm, cold, chilly).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "The city, town, municipality, or local administrative area for which weather information is requested. May include informal directional modifiers (e.g., 'north') and can be a standalone location or part of a compound location with a state or country."
+          },
+          "condition_description": {
+            "type": "string",
+            "description": "A descriptive term or phrase specifying a type of weather condition that the user is inquiring about, expecting, or verifying, such as 'rain', 'snowfall', 'storm', 'cloudy', 'foggy', 'sunny', 'overcast', or 'windy'. This can include inquiries about the presence, absence, or intensity of a condition (e.g., 'any snowfall', 'is it windy')."
+          },
+          "condition_temperature": {
+            "type": "string",
+            "description": "A descriptive term or phrase related to temperature that the user is inquiring about, expecting, or verifying, such as 'warm', 'colder', 'temperate', 'freezing', 'chilly', or a comparative statement about temperature conditions (e.g., 'will it be colder')."
+          },
+          "country": {
+            "type": "string",
+            "description": "The country, territory, or sovereign state for which weather information is requested. Used to specify or disambiguate a location, often as the primary location identifier. May be a full name (e.g., 'Albania'), a common abbreviation, or include regional designations (e.g., 'American Samoa')."
+          },
+          "current_location": {
+            "type": "string",
+            "description": "A reference to the user's present location, typically indicated by words or phrases like 'here', 'my location', 'current location', 'current spot', 'where I am', or similar expressions. It is used when the user does not specify a named location."
+          },
+          "geographic_poi": {
+            "type": "string",
+            "description": "A named geographic point of interest, such as a national park, preserve, mountain, lake, landmark, or natural feature, for which weather is requested. This includes parks and recreational areas (e.g., 'Tallgrass Prairie National Preserve')."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A spatial preposition, adverb, or phrase describing the area relative to a specified or implied reference location. Examples include 'near', 'faraway from', 'in the same area as', 'close to', 'surrounding', or 'within walking distance'."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state, province, region, or other sub-national administrative division (e.g., 'al' for Alabama, 'ia' for Iowa) for which weather information is requested. May also refer to territories or other political entities. Can be a full name (e.g., 'new mexico', 'arizona') or an abbreviation, and is often used to disambiguate or specify a city."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "The time, date, or time period for the weather query. This can include absolute times (e.g., a specific date or time like '13:22:09'), relative times (e.g., 'now', 'today', 'in seven hours from now', '5 seconds from now'), durations (e.g., 'this weekend'), or specific times of day (e.g., 'noon', 'midday', '11', 'twenty one o clock'). Relative times can be expressed as offsets from the present and are often used for current or immediate forecasts."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "PlayMusic",
+      "description": "Request to play music, a song, or audio content. This can include specifying a specific track, artist, album, genre, playlist, or other musical work or category. The request may also specify a music streaming service or platform, a preference for sorting (e.g., top charts, last, new), or a time period to filter the music. It also includes requests for general music items like 'tune', 'record', 'album', or 'ep' when used as a categorical reference.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "album": {
+            "type": "string",
+            "description": "The name of the album containing the music to be played. This can be a full album title, an EP, or a named collection of tracks."
+          },
+          "artist": {
+            "type": "string",
+            "description": "The name of the artist, band, performer, or composer of the music to be played. This includes individual artists, group names, and featured performers. The artist may be specified alone or in conjunction with other attributes like a track, year, or music item."
+          },
+          "genre": {
+            "type": "string",
+            "description": "The musical genre, style, or mood of the music to be played (e.g., rock, classical, meditative, latin)."
+          },
+          "music_item": {
+            "type": "string",
+            "description": "A named musical work, collection, or category that is not explicitly a track, album, or playlist. This can include general terms like 'tune', 'song', 'record', 'album', 'movement', 'symphony', 'ep', or other specific compositional or categorical references used to identify the music."
+          },
+          "playlist": {
+            "type": "string",
+            "description": "The name of a curated list or collection of songs to be played. This can include user-created or pre-defined playlists, and may be named after a theme, mood, or activity."
+          },
+          "service": {
+            "type": "string",
+            "description": "The specific music streaming service, platform, application, or website where the music should be played (e.g., Spotify, Last.fm, Pandora, Slacker, YouTube, Netflix)."
+          },
+          "sort": {
+            "type": "string",
+            "description": "A preference for how the music should be ordered, ranked, or selected during playback, such as 'top', 'popular', 'new', or 'last'."
+          },
+          "track": {
+            "type": "string",
+            "description": "The name of a specific song, piece, or track of music to be played. This includes full song titles and partial references to a track. The track may be specified alone or in conjunction with an artist."
+          },
+          "year": {
+            "type": "string",
+            "description": "The year, decade, era, or time period associated with the music, used to filter or specify the music to be played (e.g., '1954', '1990s', '80s', 'fifties', 'seventies', 'nineties', '2001')."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "RateBook",
+      "description": "The user expresses a rating or evaluation for a specific creative or informational work, such as a book, novel, textbook, album, song, or series. The intent captures the rating value, the unit or scale of the rating, and details about the item being rated, including its name, type, and context. The rating can be expressed as an absolute value (e.g., 'one stars') or relative to a maximum scale (e.g., 'five of 6 stars').",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "best_rating": {
+            "type": "string",
+            "description": "The maximum or highest possible value on the rating scale, expressed as a number when the rating is given relative to a maximum (e.g., '6' in 'two out of 6 points' or 'five of 6 stars'). It is captured when the utterance explicitly mentions a comparative phrase like 'out of' or 'of' followed by a number."
+          },
+          "object_name": {
+            "type": "string",
+            "description": "The specific title or name of the item being rated (e.g., 'song of scarabaeus', 'the varieties of scientific experience'). This is captured when the item is explicitly named in the utterance, often preceded by words like 'the' or 'give'."
+          },
+          "object_part_of_series_type": {
+            "type": "string",
+            "description": "Indicates if the item is part of a series and specifies the type or label of that series (e.g., 'saga', 'series', 'trilogy'). This is captured when the utterance mentions the series context with a specific term."
+          },
+          "object_select": {
+            "type": "string",
+            "description": "A determiner, pronoun, or adjective that specifies which item is being referred to, often indicating sequence, proximity, or deixis within the context (e.g., 'next', 'current', 'this', 'last', 'that'). It helps identify the item when the name is not explicitly given, such as in 'the next album' or 'current textbook'."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The general category or type of the item being rated (e.g., 'album', 'book', 'textbook', 'novel', 'song', 'essay', 'series'). This is captured when the utterance explicitly mentions the type of the work, often as a noun following a determiner like 'the' or 'current'."
+          },
+          "rating_unit": {
+            "type": "string",
+            "description": "The unit of measurement or term for the rating (e.g., 'stars', 'points', 'marks'). This is captured when explicitly stated or strongly implied by the utterance, such as 'stars' in 'one stars' or 'points' in 'out of 6 points'."
+          },
+          "rating_value": {
+            "type": "string",
+            "description": "The actual rating value given by the user, which can be numeric or textual (e.g., 'one', 'five', 'two', '1', '4', 'zero'). It represents the user's evaluation score, whether absolute (e.g., 'one stars') or relative (e.g., 'five of 6')."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchCreativeWork",
+      "description": "Search for, find, retrieve, play, view, or obtain information about a specific creative work, such as a book, song, album, show, movie, picture, video game, soundtrack, trailer, or other media. The user provides the name or title of the work and may optionally specify the type, category, or genre of the work. The intent includes requests to locate, play, purchase, view, listen to, download, or obtain details about the work. The user may phrase the request as a command (e.g., 'play', 'find me', 'show me', 'can you find') or a question.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "object_name": {
+            "type": "string",
+            "description": "The exact name, title, or identifying phrase of the creative work to search for. This includes the full title as provided by the user, which may contain articles, punctuation, conjunctions, colons, hyphens, subtitles, and descriptive words. It can be a specific title (e.g., 'the rest of my life', 'fire escape in the sky: the godlike genius of scott walker', 'the news virginian') or a descriptive phrase referring to the work. The name should be extracted as the primary identifier of the work, even if it contains words that could also be interpreted as a type or genre. It is typically mentioned after a phrase like 'play', 'find', 'the', or 'a picture of'."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The specific type, category, or genre of the creative work, such as song, album, show, movie, picture, video game, soundtrack, trailer, or series. This is optional and may be explicitly stated by the user (e.g., 'song', 'trailer', 'album', 'tv show') or inferred from context. The type may be mentioned before the name (e.g., 'the song the rest of my life') or after it (e.g., 'the news virginian song', 'the east trailer'). It should capture the user's stated or implied categorization of the work, which helps refine the search. Common patterns include 'the [type] [name]' or '[name] [type]'."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchScreeningEvent",
+      "description": "Search for movie screenings, showtimes, or film events. This includes finding schedules for specific movies or venues, locating screenings based on proximity, time, or movie type, and requesting general showtime information.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location_name": {
+            "type": "string",
+            "description": "The specific name of a cinema, theater chain, or venue where movies are shown, such as 'AMC Theaters', 'Regal Cinemas', or 'United Paramount Theatres'."
+          },
+          "movie_name": {
+            "type": "string",
+            "description": "The exact title of a movie for which the user wants to find screening details like showtimes or locations, e.g., 'The Wandering Detective: Black Wind in the Harbor' or 'Truth About Kerry'."
+          },
+          "movie_type": {
+            "type": "string",
+            "description": "The genre, category, or general type of movie, such as 'animated', 'drama', 'comedy', or a broad term like 'movies' or 'films'."
+          },
+          "object_location_type": {
+            "type": "string",
+            "description": "The type of venue or establishment where the screening occurs, such as 'cinema', 'movie theatre', 'movie house', or 'drive-in'."
+          },
+          "object_type": {
+            "type": "string",
+            "description": "The type of information or event being requested, such as a 'schedule', 'movie times', 'showtimes', 'screening', or 'showing'. This slot captures the core informational object the user is seeking."
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "A spatial descriptor indicating proximity or relative location for the screening venue, such as 'nearest', 'closest', 'in the neighborhood', 'near', 'local', 'around here', or 'in the area'."
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "The time, date, or time period for the screening, such as 'tonight', 'this weekend', a specific date, a time of day like 'noon', or a relative time expression like '12 hours from now'."
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
+

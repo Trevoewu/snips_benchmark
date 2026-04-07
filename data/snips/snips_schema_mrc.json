@@ -1,0 +1,286 @@
+{
+  "functions": [
+    {
+      "name": "AddToPlaylist",
+      "description": "Add a specified music item to a named playlist.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "artist": {
+            "type": "string",
+            "description": "who’s the artist?"
+          },
+          "entity_name": {
+            "type": "string",
+            "description": "what’s the entity name?"
+          },
+          "music_item": {
+            "type": "string",
+            "description": "what’s the music item?"
+          },
+          "playlist": {
+            "type": "string",
+            "description": "what’s the playlist?"
+          },
+          "playlist_owner": {
+            "type": "string",
+            "description": "who’s the owner?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "BookRestaurant",
+      "description": "Request to book a reservation at a restaurant, including the restaurant name, location, party size, time, cuisine, or selection criteria.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "what’s the city?"
+          },
+          "country": {
+            "type": "string",
+            "description": "what’s the country?"
+          },
+          "cuisine": {
+            "type": "string",
+            "description": "what’s the cuisine?"
+          },
+          "facility": {
+            "type": "string",
+            "description": "what’s the facility?"
+          },
+          "party_size_description": {
+            "type": "string",
+            "description": "who are the persons?"
+          },
+          "party_size_number": {
+            "type": "string",
+            "description": "how many people?"
+          },
+          "poi": {
+            "type": "string",
+            "description": "where’s the location?"
+          },
+          "restaurant_name": {
+            "type": "string",
+            "description": "what’s the name?"
+          },
+          "restaurant_type": {
+            "type": "string",
+            "description": "what’s the restaurant type?"
+          },
+          "served_dish": {
+            "type": "string",
+            "description": "what’s the served dish?"
+          },
+          "sort": {
+            "type": "string",
+            "description": "what’s the type?"
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "what’s the spatial relation?"
+          },
+          "state": {
+            "type": "string",
+            "description": "what’s the state?"
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "when’s the time range?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "GetWeather",
+      "description": "Request current weather conditions or forecasts for a location, time, or specific weather attribute.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "what’s the city?"
+          },
+          "condition_description": {
+            "type": "string",
+            "description": "how is the weather?"
+          },
+          "condition_temperature": {
+            "type": "string",
+            "description": "how is the temperature?"
+          },
+          "country": {
+            "type": "string",
+            "description": "what’s the country?"
+          },
+          "current_location": {
+            "type": "string",
+            "description": "what’s the current location?"
+          },
+          "geographic_poi": {
+            "type": "string",
+            "description": "where’s the location?"
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "what’s the spatial relation?"
+          },
+          "state": {
+            "type": "string",
+            "description": "what’s the state?"
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "when’s the time range?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "PlayMusic",
+      "description": "Play music or audio content, specifying details such as artist, track, album, genre, playlist, year, music service, or sorting preference.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "album": {
+            "type": "string",
+            "description": "what’s the album?"
+          },
+          "artist": {
+            "type": "string",
+            "description": "who’s the artist?"
+          },
+          "genre": {
+            "type": "string",
+            "description": "what’s the genre?"
+          },
+          "music_item": {
+            "type": "string",
+            "description": "what’s the music item?"
+          },
+          "playlist": {
+            "type": "string",
+            "description": "what’s the playlist?"
+          },
+          "service": {
+            "type": "string",
+            "description": "what’s the service?"
+          },
+          "sort": {
+            "type": "string",
+            "description": "what’s the type?"
+          },
+          "track": {
+            "type": "string",
+            "description": "what’s the track?"
+          },
+          "year": {
+            "type": "string",
+            "description": "when’s the year?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "RateBook",
+      "description": "Assign a rating to a specific creative work. The rating is expressed as a value on a scale, which may be numeric or textual, and may include the scale's maximum value and unit.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "best_rating": {
+            "type": "string",
+            "description": "how many rating points in total?"
+          },
+          "object_name": {
+            "type": "string",
+            "description": "what’s the object name?"
+          },
+          "object_part_of_series_type": {
+            "type": "string",
+            "description": "what’s the series?"
+          },
+          "object_select": {
+            "type": "string",
+            "description": "which to select?"
+          },
+          "object_type": {
+            "type": "string",
+            "description": "what’s the object type?"
+          },
+          "rating_unit": {
+            "type": "string",
+            "description": "what’s the rating unit?"
+          },
+          "rating_value": {
+            "type": "string",
+            "description": "how many rating value?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchCreativeWork",
+      "description": "Search for a creative work by its title, where the type of work may be specified.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "object_name": {
+            "type": "string",
+            "description": "what’s the object name?"
+          },
+          "object_type": {
+            "type": "string",
+            "description": "what’s the object type?"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "SearchScreeningEvent",
+      "description": "Search for movie screenings, showtimes, or film events. This includes finding schedules for specific movies or venues, locating screenings based on proximity, time, or movie type, and requesting general showtime information.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location_name": {
+            "type": "string",
+            "description": "where’s the location name?"
+          },
+          "movie_name": {
+            "type": "string",
+            "description": "what’s the movie name?"
+          },
+          "movie_type": {
+            "type": "string",
+            "description": "what’s the movie type?"
+          },
+          "object_location_type": {
+            "type": "string",
+            "description": "what’s the location type?"
+          },
+          "object_type": {
+            "type": "string",
+            "description": "what’s the object type?"
+          },
+          "spatial_relation": {
+            "type": "string",
+            "description": "what’s the spatial relation?"
+          },
+          "timeRange": {
+            "type": "string",
+            "description": "when’s the time range?"
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
