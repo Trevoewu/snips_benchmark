@@ -43,73 +43,96 @@ Integrated seen vs unseen across all domains
 | Seen slots | `7` | `4143` | `0.8593` | `0.8178` | `0.8380` | `0.7190` |
 | Unseen slots | `7` | `10074` | `0.7045` | `0.5410` | `0.6120` | `0.2424` |
 
-Completed fold: `AddToPlaylist`
-- Best epoch: `2`
-- Dev micro-F1: `0.7127`
-- Dev exact match: `0.5189`
-- Test all micro-F1: `0.7017`
-- Test all exact match: `0.2457`
-- Seen-slot micro-F1: `0.8660`
-- Unseen-slot micro-F1: `0.6385`
-- Report path: `outputs/qwen3_4b_sft/AddToPlaylist/seed_42/test_reports/test_all.json`
+Per-slot F1 by fold
 
-Per-slot test F1 for `AddToPlaylist`
-- `artist`: `0.8710`
-- `entity_name`: `0.4641`
-- `music_item`: `0.7827`
-- `playlist`: `0.8633`
-- `playlist_owner`: `0.0000`
+`AddToPlaylist`
 
-Completed fold: `BookRestaurant`
-- Best epoch: `6`
-- Dev micro-F1: `0.9759`
-- Test all micro-F1: `0.7193`
-- Seen-slot micro-F1: `0.9556`
-- Unseen-slot micro-F1: `0.7169`
-- Report path: `outputs/qwen3_4b_sft/BookRestaurant/seed_42/test_reports/test_all.json`
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `artist` | `0.8710` | `784` |
+| `entity_name` | `0.4641` | `608` |
+| `music_item` | `0.7827` | `940` |
+| `playlist` | `0.8633` | `2035` |
+| `playlist_owner` | `0.0000` | `1161` |
 
-Completed fold: `GetWeather`
-- Best epoch: `5`
-- Dev micro-F1: `0.9714`
-- Test all micro-F1: `0.8186`
-- Seen-slot micro-F1: `0.9496`
-- Unseen-slot micro-F1: `0.7562`
-- Report path: `outputs/qwen3_4b_sft/GetWeather/seed_42/test_reports/test_all.json`
+`BookRestaurant`
 
-Completed fold: `PlayMusic`
-- Best epoch: `1`
-- Dev micro-F1: `0.9695`
-- Test all micro-F1: `0.7588`
-- Seen-slot micro-F1: `0.7423`
-- Unseen-slot micro-F1: `0.7624`
-- Report path: `outputs/qwen3_4b_sft/PlayMusic/seed_42/test_reports/test_all.json`
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `city` | `0.8105` | `546` |
+| `country` | `0.8846` | `376` |
+| `cuisine` | `0.4589` | `221` |
+| `facility` | `0.3797` | `166` |
+| `party_size_description` | `0.1277` | `329` |
+| `party_size_number` | `0.8566` | `1079` |
+| `poi` | `0.0373` | `149` |
+| `restaurant_name` | `0.4679` | `359` |
+| `restaurant_type` | `0.5387` | `1402` |
+| `served_dish` | `0.6316` | `274` |
+| `sort` | `0.8579` | `212` |
+| `spatial_relation` | `0.8775` | `335` |
+| `state` | `0.8983` | `544` |
+| `timeRange` | `0.8927` | `708` |
 
-Completed fold: `RateBook`
-- Best epoch: `1`
-- Dev micro-F1: `0.9524`
-- Test all micro-F1: `0.4094`
-- Unseen-slot micro-F1: `0.4094`
-- Report path: `outputs/qwen3_4b_sft/RateBook/seed_42/test_reports/test_all.json`
+`GetWeather`
 
-Completed fold: `SearchCreativeWork`
-- Best epoch: `4`
-- Dev micro-F1: `0.9726`
-- Test all micro-F1: `0.8345`
-- Seen-slot micro-F1: `0.8345`
-- Report path: `outputs/qwen3_4b_sft/SearchCreativeWork/seed_42/test_reports/test_all.json`
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `city` | `0.8372` | `889` |
+| `condition_description` | `0.7367` | `475` |
+| `condition_temperature` | `0.6464` | `496` |
+| `country` | `0.9467` | `522` |
+| `current_location` | `0.3425` | `280` |
+| `geographic_poi` | `0.4085` | `306` |
+| `spatial_relation` | `0.8703` | `220` |
+| `state` | `0.9324` | `515` |
+| `timeRange` | `0.9463` | `1106` |
 
-Completed fold: `SearchScreeningEvent`
-- Best epoch: `4`
-- Dev micro-F1: `0.9689`
-- Test all micro-F1: `0.4564`
-- Seen-slot micro-F1: `0.1361`
-- Unseen-slot micro-F1: `0.4694`
-- Report path: `outputs/qwen3_4b_sft/SearchScreeningEvent/seed_42/test_reports/test_all.json`
+`PlayMusic`
 
-Hard failure modes observed on `RateBook`
-- `object_select`: `0.0000` F1
-- `best_rating`: `0.0925` F1
-- `rating_unit`: `0.1226` F1
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `album` | `0.3681` | `189` |
+| `artist` | `0.9539` | `1232` |
+| `genre` | `0.4093` | `146` |
+| `music_item` | `0.6345` | `811` |
+| `playlist` | `0.2957` | `158` |
+| `service` | `0.9553` | `780` |
+| `sort` | `0.6611` | `363` |
+| `track` | `0.2968` | `217` |
+| `year` | `0.8973` | `648` |
+
+`RateBook`
+
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `best_rating` | `0.0925` | `1072` |
+| `object_name` | `0.6238` | `1024` |
+| `object_part_of_series_type` | `0.4944` | `319` |
+| `object_select` | `0.0000` | `972` |
+| `object_type` | `0.6653` | `932` |
+| `rating_unit` | `0.1226` | `1152` |
+| `rating_value` | `0.4593` | `1991` |
+
+`SearchCreativeWork`
+
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `object_name` | `0.8256` | `2051` |
+| `object_type` | `0.8474` | `1535` |
+
+`SearchScreeningEvent`
+
+| Slot | F1 | Support |
+| --- | ---: | ---: |
+| `location_name` | `0.3312` | `610` |
+| `movie_name` | `0.7821` | `857` |
+| `movie_type` | `0.0093` | `686` |
+| `object_location_type` | `0.4520` | `477` |
+| `object_type` | `0.0018` | `706` |
+| `spatial_relation` | `0.6798` | `690` |
+| `timeRange` | `0.7090` | `277` |
+
 
 Worst per-slot failures across all seven folds
 - `AddToPlaylist.playlist_owner`: `0.0000` F1
@@ -122,10 +145,6 @@ Worst per-slot failures across all seven folds
 - `PlayMusic.track`: `0.2968` F1
 - `SearchScreeningEvent.location_name`: `0.3312` F1
 - `GetWeather.current_location`: `0.3425` F1
-
-Notes
-- Earlier pilot evaluations were sensitive to generation formatting and padding behavior.
-- `AddToPlaylist` test reports were re-run with the patched eval path and now replace the older saved outputs.
 
 ### DeBERTa-v3 MRC Baseline
 

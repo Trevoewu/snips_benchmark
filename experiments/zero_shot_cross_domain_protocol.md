@@ -38,6 +38,20 @@ Held-out test utterances are partitioned as follows:
 
 **Unseen rate**: The unseen rate is the proportion of target-domain slot labels that are unseen under the leave-one-domain-out split, i.e. `|T \ S| / |T|`.
 
+For SNIPS under this leave-one-domain-out setup:
+
+| Held-out target domain | Source labels (raw sum over 6 domains) | Target labels (T) | Seen target labels (T ∩ S) | Unseen target labels (T \ S) | Unseen rate |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `AddToPlaylist` | 48 | 5 | 3 | 2 | 0.4000 |
+| `BookRestaurant` | 39 | 14 | 6 | 8 | 0.5714 |
+| `GetWeather` | 44 | 9 | 5 | 4 | 0.4444 |
+| `PlayMusic` | 44 | 9 | 4 | 5 | 0.5556 |
+| `RateBook` | 46 | 7 | 2 | 5 | 0.7143 |
+| `SearchCreativeWork` | 51 | 2 | 2 | 0 | 0.0000 |
+| `SearchScreeningEvent` | 46 | 7 | 3 | 4 | 0.5714 |
+
+The source-label count in this table is the raw sum of per-domain label inventories across the six source domains. The unseen-rate calculation above still uses the distinct-label source set `S`.
+
 ## Evaluation views
 
 For each held-out fold, report:
@@ -54,22 +68,35 @@ Also report:
 - exact match
 - per-slot F1
 
+```python
+def f1_score(tp: int, fp: int, fn: int) -> float:
+    precision = safe_div(tp, tp + fp)
+    recall = safe_div(tp, tp + fn)
+    if precision + recall == 0:
+        return 0.0
+    return 2 * precision * recall / (precision + recall)
+```
+
+
 ## Prompt-conditioned generative setting
 
 This is the main LLM setting.
 
-Training examples:
-- input contains the example domain, allowed slot names, and utterance
-- target is a sparse JSON object containing only present slots
+Prompt templates:
 
-Dev examples:
-- come only from the six source domains
-- use the same source-domain prompt format and source-domain gold targets as training examples
+System prompt template:
 
-At test time:
-- the model receives the held-out-domain utterance
-- the allowed slot names for that held-out domain are provided in the prompt
-- the model must output the held-out-domain slot values as exact copied spans
+```text
+You extract slot values from user utterances. Use only the provided slot names. Return strict JSON as a single object from slot name to extracted text. Copy slot text spans exactly from the utterance. Omit missing slots. Return {} when no slots are present. Example format: {"slot_name": "exact text"}. Do not output markdown or extra text.
+```
+
+User prompt template:
+
+```text
+Domain: {domain}
+Allowed slot names: {slot_1}, {slot_2}, ..., {slot_n}
+Utterance: {utterance}
+```
 
 Interpretation:
 - the model is allowed to condition on held-out-domain slot names at inference time
@@ -78,6 +105,108 @@ Interpretation:
 ## MRC baseline setting
 
 The MRC baseline should follow the same zero-shot transfer logic.
+
+The QA-style slot questions are taken from the questioning strategy used in Du et al. (2021), *QA-Driven Zero-shot Slot Filling with Weak Supervision Pretraining*.
+
+Prompt templates:
+
+
+input template:
+
+```text
+Question: {slot_question}
+Context: {utterance}
+```
+
+Question templates are domain-specific and follow the paper's QA formulation. 
+
+`AddToPlaylist`
+
+| Slot | Question |
+| --- | --- |
+| `music_item` | `what’s the music item?` |
+| `playlist_owner` | `who’s the owner?` |
+| `entity_name` | `what’s the entity name?` |
+| `playlist` | `what’s the playlist?` |
+| `artist` | `who’s the artist?` |
+
+`BookRestaurant`
+
+| Slot | Question |
+| --- | --- |
+| `city` | `what’s the city?` |
+| `facility` | `what’s the facility?` |
+| `timeRange` | `when’s the time range?` |
+| `restaurant_name` | `what’s the name?` |
+| `country` | `what’s the country?` |
+| `cuisine` | `what’s the cuisine?` |
+| `restaurant_type` | `what’s the restaurant type?` |
+| `served_dish` | `what’s the served dish?` |
+| `party_size_number` | `how many people?` |
+| `poi` | `where’s the location?` |
+| `sort` | `what’s the type?` |
+| `spatial_relation` | `what’s the spatial relation?` |
+| `state` | `what’s the state?` |
+| `party_size_description` | `who are the persons?` |
+
+`GetWeather`
+
+| Slot | Question |
+| --- | --- |
+| `city` | `what’s the city?` |
+| `state` | `what’s the state?` |
+| `timeRange` | `when’s the time range?` |
+| `current_location` | `what’s the current location?` |
+| `country` | `what’s the country?` |
+| `spatial_relation` | `what’s the spatial relation?` |
+| `geographic_poi` | `where’s the location?` |
+| `condition_temperature` | `how is the temperature?` |
+| `condition_description` | `how is the weather?` |
+
+`PlayMusic`
+
+| Slot | Question |
+| --- | --- |
+| `genre` | `what’s the genre?` |
+| `music_item` | `what’s the music item?` |
+| `service` | `what’s the service?` |
+| `year` | `when’s the year?` |
+| `playlist` | `what’s the playlist?` |
+| `album` | `what’s the album?` |
+| `sort` | `what’s the type?` |
+| `track` | `what’s the track?` |
+| `artist` | `who’s the artist?` |
+
+`RateBook`
+
+| Slot | Question |
+| --- | --- |
+| `object_part_of_series_type` | `what’s the series?` |
+| `object_select` | `which to select?` |
+| `rating_value` | `how many rating value?` |
+| `object_name` | `what’s the object name?` |
+| `object_type` | `what’s the object type?` |
+| `rating_unit` | `what’s the rating unit?` |
+| `best_rating` | `how many rating points in total?` |
+
+`SearchCreativeWork`
+
+| Slot | Question |
+| --- | --- |
+| `object_name` | `what’s the object name?` |
+| `object_type` | `what’s the object type?` |
+
+`SearchScreeningEvent`
+
+| Slot | Question |
+| --- | --- |
+| `timeRange` | `when’s the time range?` |
+| `movie_type` | `what’s the movie type?` |
+| `object_location_type` | `what’s the location type?` |
+| `object_type` | `what’s the object type?` |
+| `location_name` | `where’s the location name?` |
+| `spatial_relation` | `what’s the spatial relation?` |
+| `movie_name` | `what’s the movie name?` |
 
 ### Train and dev
 
@@ -129,3 +258,7 @@ The key requirement is:
 This avoids training on question-utterance pairs that are semantically unrelated, which would otherwise distort both learning and dev selection.
 
 ## references
+
+- Bapna et al. (2017)
+- Coucke et al. (2018)
+- Du et al. (2021), *QA-Driven Zero-shot Slot Filling with Weak Supervision Pretraining*: https://aclanthology.org/2021.acl-short.83/
