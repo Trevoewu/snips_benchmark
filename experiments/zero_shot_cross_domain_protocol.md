@@ -21,9 +21,22 @@ For each held-out fold:
 - choose one SNIPS domain as the target domain
 - train on the other six source domains
 - do not use held-out-domain training utterances
-- select checkpoints on a source-domain dev split drawn from the other six domains
+- select checkpoints on a source-domain dev split drawn from the other six domains(optional)
 - evaluate once on the held-out test set
 
+### Seen and unseen slot
+
+- For a held-out target domain, let `T` be the set of slot labels that appear in that target domain, and let `S` be the set of slot labels observed in the other six source domains.
+- **Seen slots** are target-domain slot labels that also appear in the source-domain label inventory: `T ∩ S`.
+- **Unseen slots** are target-domain slot labels that do not appear in any source domain: `T \ S`.
+- This definition depends only on slot-label overlap. It does not depend on slot values, utterance wording, or semantic similarity.
+
+Held-out test utterances are partitioned as follows:
+- `test_seen_slots`: utterances whose annotated slots are non-empty and all belong to the seen-slot set.
+- `test_unseen_slots`: utterances that contain at least one unseen-slot label.
+- In SNIPS, every evaluation utterance has at least one slot annotation, so `test_all` is the union of `test_seen_slots` and `test_unseen_slots`.
+
+**Unseen rate**: The unseen rate is the proportion of target-domain slot labels that are unseen under the leave-one-domain-out split, i.e. `|T \ S| / |T|`.
 
 ## Evaluation views
 

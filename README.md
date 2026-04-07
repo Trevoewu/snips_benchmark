@@ -4,12 +4,10 @@ See `AGENT.md`, `experiments/todo.md`, `research/lab_notebook.md`, and `implemen
 
 ## Repo layout
 
-- Raw SNIPS source data lives in `data/snips/`
+- Raw SNIPS source data lives in `data/snips_raw/`
 - Regenerated artifacts are written to:
-  - `data/snips_lodo/`
   - `data/snips_lodo_llama/`
   - `data/snips_lodo_mrc/`
-  - `data/eval_reports/`
 
 Those derived directories are intentionally ignored by git. Regenerate them after cloning.
 
@@ -26,14 +24,13 @@ This runs, in order:
 1. `scripts/build_snips_lodo.py`
 2. `scripts/build_llama_slot_data.py`
 3. `scripts/build_mrc_slot_data.py`
-4. `scripts/evaluate_slot_json.py` on a gold-vs-gold sanity check
+
+`scripts/build_snips_lodo.py` is used as an internal intermediate step during preparation. Its temporary outputs are removed at the end of the pipeline.
 
 ## Generated artifacts
 
-- Fold metadata: `data/snips_lodo/summary.json`
 - Llama SFT data: `data/snips_lodo_llama/summary.json`
 - MRC baseline data: `data/snips_lodo_mrc/`
-- Evaluator sanity check: `data/eval_reports/addtoplaylist_gold_eval.json`
 
 ## Qwen Release
 
